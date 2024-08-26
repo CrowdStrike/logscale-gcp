@@ -58,7 +58,19 @@ resource "google_compute_instance" "bastion" {
 
   service_account {
     email  = google_service_account.bastion_service_account[0].email
-    scopes = ["cloud-platform"]
+    scopes = [
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring.write",
+      "https://www.googleapis.com/auth/compute",
+      "https://www.googleapis.com/auth/devstorage.read_write",
+    ]
+  }
+
+  #allow terraform to stop the instance for updates if needed
+  allow_stopping_for_update = true
+
+  timeouts {
+    update = "1m"
   }
 
   depends_on = [

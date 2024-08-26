@@ -1,0 +1,183 @@
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # google_compute_firewall.allow_internal_subnetwork_proxy[0] will be created
+  + resource "google_compute_firewall" "allow_internal_subnetwork_proxy" {
+      + creation_timestamp = (known after apply)
+      + destination_ranges = (known after apply)
+      + direction          = (known after apply)
+      + enable_logging     = (known after apply)
+      + id                 = (known after apply)
+      + name               = "logscale-wccq-network-allow-subnet-proxy"
+      + network            = "logscale-wccq-network"
+      + priority           = 1000
+      + project            = (known after apply)
+      + self_link          = (known after apply)
+      + source_ranges      = [
+          + "10.129.0.0/20",
+        ]
+
+      + allow {
+          + ports    = [
+              + "443",
+            ]
+          + protocol = "tcp"
+        }
+      + allow {
+          + ports    = []
+          + protocol = "icmp"
+        }
+    }
+
+  # google_compute_subnetwork.subnetwork_proxy[0] will be created
+  + resource "google_compute_subnetwork" "subnetwork_proxy" {
+      + creation_timestamp         = (known after apply)
+      + external_ipv6_prefix       = (known after apply)
+      + fingerprint                = (known after apply)
+      + gateway_address            = (known after apply)
+      + id                         = (known after apply)
+      + ip_cidr_range              = "10.129.0.0/20"
+      + ipv6_cidr_range            = (known after apply)
+      + name                       = "logscale-wccq-subnetwork-proxy-us-central1"
+      + network                    = "projects/formidable-pact-398819/global/networks/logscale-wccq-network"
+      + private_ip_google_access   = (known after apply)
+      + private_ipv6_google_access = (known after apply)
+      + project                    = "formidable-pact-398819"
+      + purpose                    = "REGIONAL_MANAGED_PROXY"
+      + region                     = "us-central1"
+      + role                       = "ACTIVE"
+      + secondary_ip_range         = (known after apply)
+      + self_link                  = (known after apply)
+      + stack_type                 = (known after apply)
+    }
+
+  # google_container_node_pool.logscale_ingest_node_pool[0] will be created
+  + resource "google_container_node_pool" "logscale_ingest_node_pool" {
+      + cluster                     = "logscale-wccq-gke"
+      + id                          = (known after apply)
+      + initial_node_count          = (known after apply)
+      + instance_group_urls         = (known after apply)
+      + location                    = "us-central1"
+      + managed_instance_group_urls = (known after apply)
+      + max_pods_per_node           = (known after apply)
+      + name                        = "logscale-wccq-np-ingest-uzao"
+      + name_prefix                 = (known after apply)
+      + node_count                  = 1
+      + node_locations              = (known after apply)
+      + operation                   = (known after apply)
+      + project                     = (known after apply)
+      + version                     = "1.29.5-gke.1091002"
+
+      + autoscaling {
+          + location_policy = (known after apply)
+          + max_node_count  = 3
+          + min_node_count  = 1
+        }
+
+      + management {
+          + auto_repair  = true
+          + auto_upgrade = false
+        }
+
+      + node_config {
+          + disk_size_gb      = 128
+          + disk_type         = "pd-ssd"
+          + guest_accelerator = (known after apply)
+          + image_type        = "COS_CONTAINERD"
+          + labels            = {
+              + "k8s-app"    = "logscale-ingest-wccq"
+              + "managed_by" = "terraform"
+            }
+          + local_ssd_count   = (known after apply)
+          + logging_variant   = "DEFAULT"
+          + machine_type      = "e2-standard-4"
+          + metadata          = {
+              + "block-project-ssh-keys" = "true"
+            }
+          + min_cpu_platform  = (known after apply)
+          + oauth_scopes      = [
+              + "https://www.googleapis.com/auth/compute",
+              + "https://www.googleapis.com/auth/devstorage.read_only",
+              + "https://www.googleapis.com/auth/logging.write",
+              + "https://www.googleapis.com/auth/monitoring",
+            ]
+          + preemptible       = false
+          + service_account   = (known after apply)
+          + spot              = false
+          + taint             = (known after apply)
+        }
+
+      + timeouts {
+          + delete = "1h"
+        }
+    }
+
+  # google_container_node_pool.logscale_ui_node_pool[0] will be created
+  + resource "google_container_node_pool" "logscale_ui_node_pool" {
+      + cluster                     = "logscale-wccq-gke"
+      + id                          = (known after apply)
+      + initial_node_count          = (known after apply)
+      + instance_group_urls         = (known after apply)
+      + location                    = "us-central1"
+      + managed_instance_group_urls = (known after apply)
+      + max_pods_per_node           = (known after apply)
+      + name                        = "logscale-wccq-np-ui-uzao"
+      + name_prefix                 = (known after apply)
+      + node_count                  = 1
+      + node_locations              = (known after apply)
+      + operation                   = (known after apply)
+      + project                     = (known after apply)
+      + version                     = "1.29.5-gke.1091002"
+
+      + autoscaling {
+          + location_policy = (known after apply)
+          + max_node_count  = 3
+          + min_node_count  = 1
+        }
+
+      + management {
+          + auto_repair  = true
+          + auto_upgrade = false
+        }
+
+      + node_config {
+          + disk_size_gb      = 128
+          + disk_type         = "pd-ssd"
+          + guest_accelerator = (known after apply)
+          + image_type        = "COS_CONTAINERD"
+          + labels            = {
+              + "k8s-app"    = "logscale-ui-wccq"
+              + "managed_by" = "terraform"
+            }
+          + local_ssd_count   = (known after apply)
+          + logging_variant   = "DEFAULT"
+          + machine_type      = "e2-standard-4"
+          + metadata          = {
+              + "block-project-ssh-keys" = "true"
+            }
+          + min_cpu_platform  = (known after apply)
+          + oauth_scopes      = [
+              + "https://www.googleapis.com/auth/compute",
+              + "https://www.googleapis.com/auth/devstorage.read_only",
+              + "https://www.googleapis.com/auth/logging.write",
+              + "https://www.googleapis.com/auth/monitoring",
+            ]
+          + preemptible       = false
+          + service_account   = (known after apply)
+          + spot              = false
+          + taint             = (known after apply)
+        }
+
+      + timeouts {
+          + delete = "1h"
+        }
+    }
+
+Plan: 4 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  ~ logscale_cluster_type          = "basic" -> "internal-ingest"

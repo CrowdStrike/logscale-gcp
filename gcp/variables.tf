@@ -40,13 +40,13 @@ variable "project_id" {
 
 # GKE minimum master version
 variable "min_master_version" {
-  default = "1.28.7-gke.1026001"
+  default = "1.29.5-gke.1091002"
 }
 
 
 # Nodepool GKE version
 variable "node_pool_version" {
-  default = "1.28.7-gke.1026001"
+  default = "1.29.5-gke.1091002"
 }
 
 # Max pods per mode

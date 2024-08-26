@@ -7,7 +7,14 @@ resource "google_storage_bucket" "log_bucket" {
 
   # should this move to region?
   location = "US"
+
+  uniform_bucket_level_access = true
+
+  versioning {
+    enabled = true
+  }
 }
+
 
 locals {
   logscale_cluster_name = (var.logscale_gke_cluster_name != "" ? var.logscale_gke_cluster_name : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}")

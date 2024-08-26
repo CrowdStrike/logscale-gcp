@@ -38,6 +38,12 @@ resource "google_compute_subnetwork" "subnetwork_proxy" {
   role          = "ACTIVE"
   network       = google_compute_network.network.id
 
+  #log_config {
+  #  aggregation_interval = "INTERVAL_15_MIN"
+  #  flow_sampling        = 0.1
+  #  metadata             = "INCLUDE_ALL_METADATA"
+  #}
+
 }
 //Firewalls
 

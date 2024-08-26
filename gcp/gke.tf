@@ -24,6 +24,16 @@ resource "google_container_cluster" "logscale" {
     services_ipv4_cidr_block = var.services_ipv4_cidr_block # Custom CIDR block for services
   }
 
+  #network_policy{
+  #  enabled = true
+  #}
+
+  addons_config {
+    network_policy_config {
+      disabled = false
+    }
+  }
+
   private_cluster_config {
     master_ipv4_cidr_block  = var.master_ipv4_cidr_block
     enable_private_nodes    = var.private_nodes
