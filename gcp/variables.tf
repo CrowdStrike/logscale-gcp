@@ -46,7 +46,7 @@ variable "min_master_version" {
 
 # Nodepool GKE version
 variable "node_pool_version" {
-  default = "1.29.5-gke.1091002"
+  default = "1.28.7-gke.1026001"
 }
 
 # Max pods per mode
@@ -155,6 +155,17 @@ variable "services_ipv4_cidr_block" {
 variable "master_ipv4_cidr_block" {
   type    = string
   default = "172.16.0.0/28"
+}
+
+#test gke cluster
+variable "master_ipv4_cidr_block_test" {
+  type    = string
+  default = "172.24.0.0/28"
+}
+
+variable "services_ipv4_cidr_block_test" {
+  type    = string
+  default = "172.24.1.0/24"
 }
 
 # GCP CIDR range
@@ -312,11 +323,11 @@ locals {
 
 # Output variables used by LogScale GCP Components
 output "logscale_cluster_name" {
-  value = (var.logscale_gke_cluster_name != "" ? var.logscale_gke_cluster_name : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}")
+  value = "logscale-test"
 }
 
 output "logscale_cluster_identifier" {
-  value = random_string.env_identifier_rand.result
+  value = "wccq"
 }
 
 output "logscale_cluster_size" {

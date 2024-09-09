@@ -19,7 +19,8 @@ resource "google_project_iam_binding" "terraform_gcp_sa_roles" {
   project = var.project_id
   role    = "roles/storage.objectAdmin"
   members = [
-    "serviceAccount:${google_service_account.tf_service_account.email}"
+    "serviceAccount:${google_service_account.tf_service_account.email}",
+    "user:grant.schofield@crowdstrike.com",
   ]
 
   depends_on = [
