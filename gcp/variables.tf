@@ -40,13 +40,13 @@ variable "project_id" {
 
 # GKE minimum master version
 variable "min_master_version" {
-  default = "1.28.7-gke.1026001"
+  default = "1.30.3-gke.1639000"
 }
 
 
 # Nodepool GKE version
 variable "node_pool_version" {
-  default = "1.28.7-gke.1026001"
+  default = "1.30.3-gke.1639000"
 }
 
 # Max pods per mode
@@ -142,25 +142,25 @@ variable "enable_shielded_nodes" {
 # VPC CIDR
 variable "cluster_ipv4_cidr_block" {
   type    = string
-  default = "10.0.0.0/14"
+  default = "10.124.0.0/14"
 }
 
 # GKE Services CIDR
 variable "services_ipv4_cidr_block" {
   type    = string
-  default = "172.16.1.0/24"
+  default = "172.24.1.0/24"
 }
 
 # GKE Control plane CIDR 
 variable "master_ipv4_cidr_block" {
   type    = string
-  default = "172.16.0.0/28"
+  default = "172.24.2.0/28"
 }
 
 # GCP CIDR range
 variable "gcp_cidr_range" {
   type    = string
-  default = "10.128.0.0/20"
+  default = "10.131.0.0/20"
 }
 
 # GCP Subnetwork Proxy Name
@@ -178,7 +178,7 @@ variable "gcp_network_router_name" {
 # GCP Subnetwork Proxy CIDR Range
 variable "gcp_subnetwork_proxy_cidr_range" {
   type    = string
-  default = "10.129.0.0/20"
+  default = "10.134.0.0/20"
 }
 
 

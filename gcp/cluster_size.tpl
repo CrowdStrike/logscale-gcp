@@ -3,11 +3,11 @@ ${jsonencode(
     // This template specifies the available paramaters for the different sizes of LogScale clusters
     "xsmall": {
         "logscale_digest_node_count": 3,
-        "logscale_digest_machine_type": "n2-standard-8",
+        "logscale_digest_machine_type": "n2-standard-16",
         "logscale_digest_local_ssd_count": 8,
         "logscale_digest_root_disk_size": 128,
         "logscale_digest_root_disk_type": "pd-ssd",
-        "logscale_digest_data_disk_size": "3000Gi",
+        "logscale_digest_data_disk_size": "300Gi",
         "logscale_digest_min_node_count": 1,
         "logscale_digest_max_node_count": 3,
         "logscale_digest_resources": {"limits": {"cpu": 7, "memory": "30Gi"}, "requests": {"cpu": 7, "memory": "30Gi"}},

@@ -1,0 +1,33 @@
+name: ci-main
+on:
+  push:
+    branches:
+      - "snig/ci"
+  pull_request:
+    branches:
+      - "snig/ci"
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: false
+          persist-credentials: false
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "14"
+      - name: Semantic Release
+        id: version
+        uses: cycjimmy/semantic-release-action@v3.4.2
+        with:
+          semantic_version: 17
+          extra_plugins: |
+            @semantic-release/exec
+            @semantic-release/git
+            semantic-release-helm
+            @google/semantic-release-replace-plugin
+            conventional-changelog-conventionalcommits
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

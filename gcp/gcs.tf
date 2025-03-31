@@ -44,7 +44,7 @@ module "gcs_workload_identity" {
   name         = (var.logscale_cluster_k8s_service_account_name != "" ? var.logscale_cluster_k8s_service_account_name : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}-wl-identity")
   namespace    = var.logscale_cluster_k8s_namespace_name
   project_id   = var.project_id
-  cluster_name = google_container_cluster.logscale.name
+  cluster_name = google_container_cluster.logscale_test1.name
 
   automount_service_account_token = true
   annotate_k8s_sa                 = false

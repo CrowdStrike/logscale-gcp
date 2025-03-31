@@ -1,5 +1,5 @@
 # GKE Cluster
-/*resource "google_container_cluster" "logscale" {
+resource "google_container_cluster" "logscale_test1" {
   name     = (var.logscale_gke_cluster_name != "" ? var.logscale_gke_cluster_name : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}-gke")
   location = var.region
   provider = google-beta
@@ -82,11 +82,11 @@ resource "random_string" "node_pool_suffix" {
 
 # Every logscale_cluster_type will have this nodepool defined, depending on 
 # on the type this node pool may or may not be used by the ingress backend 
-resource "google_container_node_pool" "logscale_node_pool" {
+resource "google_container_node_pool" "logscale_node_pool_test1" {
   provider   = google-beta
   name       = (var.logscale_gke_cluster_name != "" ? "${var.logscale_gke_cluster_name}-np-logscale-${random_string.node_pool_suffix.result}" : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}-np-logscale-${random_string.node_pool_suffix.result}")
   location   = var.region
-  cluster    = google_container_cluster.logscale.name
+  cluster    = google_container_cluster.logscale_test1.name
   node_count = ceil(local.cluster_size_rendered[var.logscale_cluster_size]["logscale_digest_node_count"] / 3)
   version    = var.node_pool_version
 
@@ -142,17 +142,17 @@ resource "google_container_node_pool" "logscale_node_pool" {
   }
 
   depends_on = [
-    google_container_cluster.logscale,
+    google_container_cluster.logscale_test1,
     google_project_iam_binding.terraform_gcp_sa_editor
   ]
 }
 
 # Every logscale_cluster_type will have this nodepool defined
-resource "google_container_node_pool" "kafka_node_pool" {
+resource "google_container_node_pool" "kafka_node_pool_test1" {
   provider   = google-beta
   name       = (var.logscale_gke_cluster_name != "" ? "${var.logscale_gke_cluster_name}-np-kafka-${random_string.node_pool_suffix.result}" : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}-np-kafka-${random_string.node_pool_suffix.result}")
   location   = var.region
-  cluster    = google_container_cluster.logscale.name
+  cluster    = google_container_cluster.logscale_test1.name
   node_count = ceil(local.cluster_size_rendered[var.logscale_cluster_size]["kafka_broker_node_count"] / 3)
   version    = var.node_pool_version
 
@@ -200,16 +200,16 @@ resource "google_container_node_pool" "kafka_node_pool" {
   }
 
   depends_on = [
-    google_container_cluster.logscale,
+    google_container_cluster.logscale_test1,
   ]
 }
 
 # Every logscale_cluster_type will have this nodepool defined
-resource "google_container_node_pool" "zookeeper_node_pool" {
+resource "google_container_node_pool" "zookeeper_node_pool_test1" {
   provider   = google-beta
   name       = (var.logscale_gke_cluster_name != "" ? "${var.logscale_gke_cluster_name}-np-zookeeper-${random_string.node_pool_suffix.result}" : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}-np-zookeeper-${random_string.node_pool_suffix.result}")
   location   = var.region
-  cluster    = google_container_cluster.logscale.name
+  cluster    = google_container_cluster.logscale_test1.name
   node_count = ceil(local.cluster_size_rendered[var.logscale_cluster_size]["zookeeper_node_count"] / 3)
   version    = var.node_pool_version
 
@@ -257,17 +257,17 @@ resource "google_container_node_pool" "zookeeper_node_pool" {
   }
 
   depends_on = [
-    google_container_cluster.logscale,
+    google_container_cluster.logscale_test1,
   ]
 }
 
 # This nodepol is created when the ingress logscale_cluster_type is defined
-resource "google_container_node_pool" "logscale_ingress_node_pool" {
+resource "google_container_node_pool" "logscale_ingress_node_pool_test1" {
   count      = contains(["ingress"], var.logscale_cluster_type) ? 1 : 0
   provider   = google-beta
   name       = (var.logscale_gke_cluster_name != "" ? "${var.logscale_gke_cluster_name}-np-ingress-${random_string.env_identifier_rand.result}" : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}-np-ingress-${random_string.env_identifier_rand.result}")
   location   = var.region
-  cluster    = google_container_cluster.logscale.name
+  cluster    = google_container_cluster.logscale_test1.name
   node_count = ceil(local.cluster_size_rendered[var.logscale_cluster_size]["logscale_ingress_node_count"] / 3)
   version    = var.node_pool_version
 
@@ -315,18 +315,18 @@ resource "google_container_node_pool" "logscale_ingress_node_pool" {
   }
 
   depends_on = [
-    google_container_cluster.logscale,
+    google_container_cluster.logscale_test1,
   ]
 }
 
 
 # This nodepol is created when the internal-ingest logscale_cluster_type is defined
-resource "google_container_node_pool" "logscale_ingest_node_pool" {
+resource "google_container_node_pool" "logscale_ingest_node_pool_test1" {
   count      = contains(["internal-ingest"], var.logscale_cluster_type) ? 1 : 0
   provider   = google-beta
   name       = (var.logscale_gke_cluster_name != "" ? "${var.logscale_gke_cluster_name}-np-ingest-${random_string.node_pool_suffix.result}" : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}-np-ingest-${random_string.node_pool_suffix.result}")
   location   = var.region
-  cluster    = google_container_cluster.logscale.name
+  cluster    = google_container_cluster.logscale_test1.name
   node_count = ceil(local.cluster_size_rendered[var.logscale_cluster_size]["logscale_ingest_node_count"] / 3)
   version    = var.node_pool_version
 
@@ -374,17 +374,17 @@ resource "google_container_node_pool" "logscale_ingest_node_pool" {
   }
 
   depends_on = [
-    google_container_cluster.logscale,
+    google_container_cluster.logscale_test1,
   ]
 }
 
 # This nodepol is created when the internal-ingest logscale_cluster_type is defined
-resource "google_container_node_pool" "logscale_ui_node_pool" {
+resource "google_container_node_pool" "logscale_ui_node_pool_test1" {
   count      = contains(["internal-ingest"], var.logscale_cluster_type) ? 1 : 0
   provider   = google-beta
   name       = (var.logscale_gke_cluster_name != "" ? "${var.logscale_gke_cluster_name}-np-ui-${random_string.node_pool_suffix.result}" : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}-np-ui-${random_string.node_pool_suffix.result}")
   location   = var.region
-  cluster    = google_container_cluster.logscale.name
+  cluster    = google_container_cluster.logscale_test1.name
   node_count = ceil(local.cluster_size_rendered[var.logscale_cluster_size]["logscale_ui_node_count"] / 3)
   version    = var.node_pool_version
 
@@ -432,10 +432,10 @@ resource "google_container_node_pool" "logscale_ui_node_pool" {
   }
 
   depends_on = [
-    google_container_cluster.logscale,
+    google_container_cluster.logscale_test1,
   ]
 }
 
 output "gke_credential_command" {
-  value = "gcloud container clusters get-credentials ${google_container_cluster.logscale.name} --region us-central1 --project ${var.project_id}"
-}*/
+  value = "gcloud container clusters get-credentials ${google_container_cluster.logscale_test1.name} --region us-central1 --project ${var.project_id}"
+}
