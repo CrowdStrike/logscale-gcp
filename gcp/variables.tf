@@ -40,7 +40,7 @@ variable "project_id" {
 
 # GKE minimum master version
 variable "min_master_version" {
-  default = "1.29.5-gke.1091002"
+  default = "1.31.8-gke.1045000"
 }
 
 
