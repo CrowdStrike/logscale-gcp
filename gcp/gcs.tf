@@ -7,6 +7,12 @@ resource "google_storage_bucket" "log_bucket" {
 
   # should this move to region?
   location = "US"
+
+  uniform_bucket_level_access = true
+
+  versioning {
+    enabled = true
+  }
 }
 
 locals {
@@ -40,7 +46,7 @@ resource "google_storage_bucket" "logscale_bucket_storage" {
 
 # Workload identity for LogScale bucket storage access
 module "gcs_workload_identity" {
-  source       = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
+  source       = "git::https://github.com/terraform-google-modules/terraform-google-kubernetes-engine.git//modules/workload-identity?ref=165a4ae3d5a8d8235b30fac8edd09fe7030d2046"
   name         = (var.logscale_cluster_k8s_service_account_name != "" ? var.logscale_cluster_k8s_service_account_name : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}-wl-identity")
   namespace    = var.logscale_cluster_k8s_namespace_name
   project_id   = var.project_id
