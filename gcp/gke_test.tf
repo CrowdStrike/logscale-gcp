@@ -71,7 +71,6 @@ resource "google_container_cluster" "logscale_test1" {
     workload_pool = "${var.project_id}.svc.id.goog"
   }
 }
-
 resource "random_string" "node_pool_suffix" {
   length  = 4
   special = false
