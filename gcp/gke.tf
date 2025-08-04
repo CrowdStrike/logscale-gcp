@@ -211,7 +211,7 @@ resource "google_container_node_pool" "kafka_node_pool" {
 }
 
 # Every logscale_cluster_type will have this nodepool defined
-resource "google_container_node_pool" "zookeeper_node_pool" {
+/*resource "google_container_node_pool" "zookeeper_node_pool" {
   provider   = google-beta
   name       = (var.logscale_gke_cluster_name != "" ? "${var.logscale_gke_cluster_name}-np-zookeeper-${random_string.node_pool_suffix.result}" : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}-np-zookeeper-${random_string.node_pool_suffix.result}")
   location   = var.region
@@ -265,7 +265,7 @@ resource "google_container_node_pool" "zookeeper_node_pool" {
   depends_on = [
     google_container_cluster.logscale,
   ]
-}
+}*/
 
 # This nodepol is created when the ingress logscale_cluster_type is defined
 resource "google_container_node_pool" "logscale_ingress_node_pool" {
