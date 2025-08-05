@@ -2,12 +2,12 @@
 
 resource "google_compute_network" "network" {
   project                 = var.project_id
-  name                    = (var.gcp_network_name != "" ? var.gcp_network_name : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}-network")
+  name                    = (var.gcp_network_name != "" ? var.gcp_network_name : "${var.infrastructure_prefix}-${var.env_identifier_rand}-network")
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "subnetwork" {
-  name                     = (var.gcp_subnetwork_name != "" ? var.gcp_subnetwork_name : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}-subnetwork-${var.region}")
+  name                     = (var.gcp_subnetwork_name != "" ? var.gcp_subnetwork_name : "${var.infrastructure_prefix}-${var.env_identifier_rand}-subnetwork-${var.region}")
   project                  = var.project_id
   ip_cidr_range            = var.gcp_cidr_range
   region                   = var.region
@@ -30,7 +30,7 @@ resource "google_compute_subnetwork" "subnetwork_proxy" {
   count    = contains(["internal-ingest"], var.logscale_cluster_type) ? 1 : 0
   provider = google-beta
 
-  name          = (var.gcp_subnetwork_proxy_name != "" ? var.gcp_subnetwork_proxy_name : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}-subnetwork-proxy-${var.region}")
+  name          = (var.gcp_subnetwork_proxy_name != "" ? var.gcp_subnetwork_proxy_name : "${var.infrastructure_prefix}-${var.env_identifier_rand}-subnetwork-proxy-${var.region}")
   project       = var.project_id
   ip_cidr_range = var.gcp_subnetwork_proxy_cidr_range
   region        = var.region
@@ -117,7 +117,7 @@ resource "google_compute_firewall" "allow_internal_subnetwork_proxy" {
 //Reserved external IP for gce-ingress
 resource "google_compute_global_address" "gce_ingress_ip" {
   project      = var.project_id
-  name         = (var.gce_ingress_ip_name != "" ? var.gce_ingress_ip_name : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}-gce-ingress-ip")
+  name         = (var.gce_ingress_ip_name != "" ? var.gce_ingress_ip_name : "${var.infrastructure_prefix}-${var.env_identifier_rand}-gce-ingress-ip")
   address_type = "EXTERNAL"
   ip_version   = "IPV4"
 }
@@ -125,7 +125,7 @@ resource "google_compute_global_address" "gce_ingress_ip" {
 // NAT Config
 
 resource "google_compute_router" "router" {
-  name    = (var.gcp_network_router_name != "" ? var.gcp_network_router_name : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}-network-router")
+  name    = (var.gcp_network_router_name != "" ? var.gcp_network_router_name : "${var.infrastructure_prefix}-${var.env_identifier_rand}-network-router")
   region  = var.region
   network = google_compute_network.network.name
 
@@ -135,13 +135,13 @@ resource "google_compute_router" "router" {
 }
 
 resource "google_compute_address" "nat_egress_ip" {
-  name         = (var.gcp_network_nat_ip_name != "" ? var.gcp_network_nat_ip_name : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}-egress-ip")
+  name         =  (var.gcp_network_nat_ip_name != "" ? var.gcp_network_nat_ip_name : "${var.infrastructure_prefix}-${var.env_identifier_rand}-egress-ip")
   region       = var.region
   address_type = "EXTERNAL"
 }
 
 resource "google_compute_router_nat" "nat_manual" {
-  name   = (var.gcp_network_router_nat_name != "" ? var.gcp_network_router_nat_name : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}-nat-router")
+  name   = (var.gcp_network_router_nat_name != "" ? var.gcp_network_router_nat_name : "${var.infrastructure_prefix}-${var.env_identifier_rand}-nat-router")
   router = google_compute_router.router.name
   region = google_compute_router.router.region
 
@@ -160,24 +160,4 @@ resource "google_compute_router_nat" "nat_manual" {
     filter = "ERRORS_ONLY"
     enable = true
   }
-}
-
-output "logscale-nat-ip" {
-  value = google_compute_address.nat_egress_ip.address
-}
-
-output "gce-ingress-external-static-ip" {
-  value = google_compute_global_address.gce_ingress_ip.address
-}
-
-output "network_id" {
-  value = google_compute_network.network.id
-}
-
-output "subnetwork_id" {
-  value = google_compute_subnetwork.subnetwork.id
-}
-
-output "network_name" {
-  value = google_compute_network.network.name
 }

@@ -4,7 +4,7 @@ resource "kubernetes_manifest" "google_managed_certificate" {
     "apiVersion" = "networking.gke.io/v1"
     "kind"       = "ManagedCertificate"
     "metadata" = {
-      "name"      = "${local.logscale_cluster_name}-google-managed-certificate"
+      "name"      = "${var.logscale_cluster_name}-google-managed-certificate"
       "namespace" = "logging"
     }
     "spec" = {
@@ -17,10 +17,10 @@ resource "kubernetes_manifest" "google_managed_certificate" {
 resource "kubernetes_service" "logscale_basic_nodeport" {
   count = contains(["basic"], var.logscale_cluster_type) ? 1 : 0
   metadata {
-    name      = "${local.logscale_cluster_name}-nodeport"
+    name      = "${var.logscale_cluster_name}-nodeport"
     namespace = kubernetes_namespace.logscale.id
     annotations = {
-      "cloud.google.com/backend-config" = "{\"default\": \"${local.logscale_cluster_name}-healthcheck-config\"}"
+      "cloud.google.com/backend-config" = "{\"default\": \"${var.logscale_cluster_name}-healthcheck-config\"}"
       "cloud.google.com/app-protocols"  = "{\"logscale-port\":\"HTTPS\"}"
     }
   }
@@ -60,7 +60,7 @@ resource "kubernetes_manifest" "logscale_basic_ingress_backend" {
       "labels" = {
         "app.kubernetes.io/name" = "humio"
       }
-      "name"      = "${local.logscale_cluster_name}-healthcheck-config"
+      "name"      = "${var.logscale_cluster_name}-healthcheck-config"
       "namespace" = "${kubernetes_namespace.logscale.id}"
     }
     "spec" = {
@@ -85,19 +85,19 @@ resource "kubernetes_manifest" "logscale_basic_ingress_backend" {
 resource "kubernetes_ingress_v1" "logscale_basic_ingress" {
   count = contains(["basic"], var.logscale_cluster_type) ? 1 : 0
   metadata {
-    name      = "${local.logscale_cluster_name}-basic-ingress"
+    name      = "${var.logscale_cluster_name}-basic-ingress"
     namespace = var.logscale_cluster_k8s_namespace_name
     annotations = {
       "kubernetes.io/ingress.class"                 = "gce"
-      "kubernetes.io/ingress.global-static-ip-name" = "${local.logscale_gce_ingress_ip}"
+      "kubernetes.io/ingress.global-static-ip-name" = "${var.logscale_gce_ingress_ip}"
       "kubernetes.io/ingress.allow-http"            = "false"
-      "networking.gke.io/managed-certificates" : "${local.logscale_cluster_name}-google-managed-certificate"
+      "networking.gke.io/managed-certificates" : "${var.logscale_cluster_name}-google-managed-certificate"
     }
   }
   spec {
     default_backend {
       service {
-        name = "${local.logscale_cluster_name}-nodeport"
+        name = "${var.logscale_cluster_name}-nodeport"
         port {
           number = 8080
         }
@@ -109,7 +109,7 @@ resource "kubernetes_ingress_v1" "logscale_basic_ingress" {
         path {
           backend {
             service {
-              name = "${local.logscale_cluster_name}-nodeport"
+              name = "${var.logscale_cluster_name}-nodeport"
               port {
                 number = 8080
               }
@@ -131,16 +131,16 @@ resource "kubernetes_ingress_v1" "logscale_basic_ingress" {
 resource "kubernetes_service" "logscale_nodeport_ingress" {
   count = contains(["ingress"], var.logscale_cluster_type) ? 1 : 0
   metadata {
-    name      = "${local.logscale_cluster_name}-nodeport-ingress"
+    name      = "${var.logscale_cluster_name}-nodeport-ingress"
     namespace = var.logscale_cluster_k8s_namespace_name
     annotations = {
-      "cloud.google.com/backend-config" = "{\"default\": \"${local.logscale_cluster_name}-ingress-healthcheck-config\"}"
+      "cloud.google.com/backend-config" = "{\"default\": \"${var.logscale_cluster_name}-ingress-healthcheck-config\"}"
       "cloud.google.com/app-protocols"  = "{\"logscale-port\":\"HTTPS\"}"
     }
   }
   spec {
     selector = {
-      "humio.com/node-pool" = "${local.logscale_cluster_name}-ingress-only"
+      "humio.com/node-pool" = "${var.logscale_cluster_name}-ingress-only"
     }
     port {
       port        = 8080
@@ -172,7 +172,7 @@ resource "kubernetes_manifest" "logscale_ingress_ingress_backend" {
       "labels" = {
         "app.kubernetes.io/name" = "humio"
       }
-      "name"      = "${local.logscale_cluster_name}-ingress-healthcheck-config"
+      "name"      = "${var.logscale_cluster_name}-ingress-healthcheck-config"
       "namespace" = "${kubernetes_namespace.logscale.id}"
     }
     "spec" = {
@@ -200,15 +200,15 @@ resource "kubernetes_ingress_v1" "logscale_ingress_ingress" {
     namespace = var.logscale_cluster_k8s_namespace_name
     annotations = {
       "kubernetes.io/ingress.class"                 = "gce"
-      "kubernetes.io/ingress.global-static-ip-name" = "${local.logscale_gce_ingress_ip}"
+      "kubernetes.io/ingress.global-static-ip-name" = "${var.logscale_gce_ingress_ip}"
       "kubernetes.io/ingress.allow-http"            = "false"
-      "networking.gke.io/managed-certificates" : "${local.logscale_cluster_name}-google-managed-certificate"
+      "networking.gke.io/managed-certificates" : "${var.logscale_cluster_name}-google-managed-certificate"
     }
   }
   spec {
     default_backend {
       service {
-        name = "${local.logscale_cluster_name}-nodeport-ingress"
+        name = "${var.logscale_cluster_name}-nodeport-ingress"
         port {
           number = 8080
         }
@@ -220,7 +220,7 @@ resource "kubernetes_ingress_v1" "logscale_ingress_ingress" {
         path {
           backend {
             service {
-              name = "${local.logscale_cluster_name}-nodeport-ingress"
+              name = "${var.logscale_cluster_name}-nodeport-ingress"
               port {
                 number = 8080
               }
@@ -242,16 +242,16 @@ resource "kubernetes_ingress_v1" "logscale_ingress_ingress" {
 resource "kubernetes_service" "logscale_nodeport_ui" {
   count = contains(["internal-ingest"], var.logscale_cluster_type) ? 1 : 0
   metadata {
-    name      = "${local.logscale_cluster_name}-nodeport-ui"
+    name      = "${var.logscale_cluster_name}-nodeport-ui"
     namespace = var.logscale_cluster_k8s_namespace_name
     annotations = {
-      "cloud.google.com/backend-config" = "{\"default\": \"${local.logscale_cluster_name}-ui-healthcheck-config\"}"
+      "cloud.google.com/backend-config" = "{\"default\": \"${var.logscale_cluster_name}-ui-healthcheck-config\"}"
       "cloud.google.com/app-protocols"  = "{\"logscale-port\":\"HTTPS\"}"
     }
   }
   spec {
     selector = {
-      "humio.com/node-pool" = "${local.logscale_cluster_name}-ui-only"
+      "humio.com/node-pool" = "${var.logscale_cluster_name}-ui-only"
     }
     port {
       port        = 8080
@@ -283,7 +283,7 @@ resource "kubernetes_manifest" "logscale_ingress_ui_backend" {
       "labels" = {
         "app.kubernetes.io/name" = "humio"
       }
-      "name"      = "${local.logscale_cluster_name}-ui-healthcheck-config"
+      "name"      = "${var.logscale_cluster_name}-ui-healthcheck-config"
       "namespace" = "${kubernetes_namespace.logscale.id}"
     }
     "spec" = {
@@ -307,19 +307,19 @@ resource "kubernetes_manifest" "logscale_ingress_ui_backend" {
 resource "kubernetes_ingress_v1" "logscale_ingress_ui" {
   count = contains(["internal-ingest"], var.logscale_cluster_type) ? 1 : 0
   metadata {
-    name      = "${local.logscale_cluster_name}-ui-ingress"
+    name      = "${var.logscale_cluster_name}-ui-ingress"
     namespace = var.logscale_cluster_k8s_namespace_name
     annotations = {
       "kubernetes.io/ingress.class"                 = "gce"
-      "kubernetes.io/ingress.global-static-ip-name" = "${local.logscale_gce_ingress_ip}"
+      "kubernetes.io/ingress.global-static-ip-name" = "${var.logscale_gce_ingress_ip}"
       "kubernetes.io/ingress.allow-http"            = "false"
-      "networking.gke.io/managed-certificates" : "${local.logscale_cluster_name}-google-managed-certificate"
+      "networking.gke.io/managed-certificates" : "${var.logscale_cluster_name}-google-managed-certificate"
     }
   }
   spec {
     default_backend {
       service {
-        name = "${local.logscale_cluster_name}-nodeport-ui"
+        name = "${var.logscale_cluster_name}-nodeport-ui"
         port {
           number = 8080
         }
@@ -331,7 +331,7 @@ resource "kubernetes_ingress_v1" "logscale_ingress_ui" {
         path {
           backend {
             service {
-              name = "${local.logscale_cluster_name}-nodeport-ui"
+              name = "${var.logscale_cluster_name}-nodeport-ui"
               port {
                 number = 8080
               }
@@ -353,17 +353,17 @@ resource "kubernetes_ingress_v1" "logscale_ingress_ui" {
 resource "kubernetes_service" "logscale_nodeport_ingest" {
   count = contains(["internal-ingest"], var.logscale_cluster_type) ? 1 : 0
   metadata {
-    name      = "${local.logscale_cluster_name}-nodeport-ingest"
+    name      = "${var.logscale_cluster_name}-nodeport-ingest"
     namespace = var.logscale_cluster_k8s_namespace_name
     annotations = {
-      "cloud.google.com/backend-config" = "{\"default\": \"${local.logscale_cluster_name}-ingest-healthcheck-config\"}"
+      "cloud.google.com/backend-config" = "{\"default\": \"${var.logscale_cluster_name}-ingest-healthcheck-config\"}"
       "cloud.google.com/app-protocols"  = "{\"logscale-port\":\"HTTPS\"}"
       "cloud.google.com/neg"            = "{\"ingress\": true}"
     }
   }
   spec {
     selector = {
-      "humio.com/node-pool" = "${local.logscale_cluster_name}-ingest-only"
+      "humio.com/node-pool" = "${var.logscale_cluster_name}-ingest-only"
     }
     port {
       port        = 8080
@@ -396,7 +396,7 @@ resource "kubernetes_manifest" "logscale_ingress_ingest_backend" {
       "labels" = {
         "app.kubernetes.io/name" = "humio"
       }
-      "name"      = "${local.logscale_cluster_name}-ingest-healthcheck-config"
+      "name"      = "${var.logscale_cluster_name}-ingest-healthcheck-config"
       "namespace" = "logging"
     }
     "spec" = {
@@ -420,7 +420,7 @@ resource "kubernetes_manifest" "logscale_ingress_ingest_backend" {
 resource "kubernetes_ingress_v1" "logscale_ingress_ingest" {
   count = contains(["internal-ingest"], var.logscale_cluster_type) ? 1 : 0
   metadata {
-    name      = "${local.logscale_cluster_name}-ingest-ingress"
+    name      = "${var.logscale_cluster_name}-ingest-ingress"
     namespace = var.logscale_cluster_k8s_namespace_name
     annotations = {
       "kubernetes.io/ingress.class"      = "gce"
@@ -431,7 +431,7 @@ resource "kubernetes_ingress_v1" "logscale_ingress_ingest" {
   spec {
     default_backend {
       service {
-        name = "${local.logscale_cluster_name}-nodeport-ingest"
+        name = "${var.logscale_cluster_name}-nodeport-ingest"
         port {
           number = 8080
         }
@@ -443,7 +443,7 @@ resource "kubernetes_ingress_v1" "logscale_ingress_ingest" {
         path {
           backend {
             service {
-              name = "${local.logscale_cluster_name}-nodeport-ingest"
+              name = "${var.logscale_cluster_name}-nodeport-ingest"
               port {
                 number = 8080
               }
@@ -455,7 +455,7 @@ resource "kubernetes_ingress_v1" "logscale_ingress_ingest" {
       }
     }
     tls {
-      secret_name = "${local.logscale_cluster_name}-internal-ingest"
+      secret_name = "${var.logscale_cluster_name}-internal-ingest"
     }
   }
 
@@ -475,20 +475,20 @@ resource "kubernetes_manifest" "logscale_internal_ingest_cert" {
         "app.kubernetes.io/instance"   = "humiocluster"
         "app.kubernetes.io/managed-by" = "terraform"
         "app.kubernetes.io/name"       = "humio"
-        "humio.com/node-pool"          = "${local.logscale_cluster_name}-ingest-only"
+        "humio.com/node-pool"          = "${var.logscale_cluster_name}-ingest-only"
       }
-      "name"      = "${local.logscale_cluster_name}-internal-ingest"
+      "name"      = "${var.logscale_cluster_name}-internal-ingest"
       "namespace" = "logging"
     }
     "spec" = {
       "dnsNames" = [
-        "${local.logscale_cluster_name}-internal-ingest.logging",
-        "${local.logscale_cluster_name}-internal-ingest-headless.logging",
+        "${var.logscale_cluster_name}-internal-ingest.logging",
+        "${var.logscale_cluster_name}-internal-ingest-headless.logging",
       ]
       "issuerRef" = {
         "name" = "humiocluster"
       }
-      "secretName" = "${local.logscale_cluster_name}-internal-ingest"
+      "secretName" = "${var.logscale_cluster_name}-internal-ingest"
     }
   }
   depends_on = [
