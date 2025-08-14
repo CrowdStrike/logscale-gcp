@@ -27,7 +27,7 @@ resource "google_compute_subnetwork" "subnetwork" {
 
 # Created for internal ingest LB
 resource "google_compute_subnetwork" "subnetwork_proxy" {
-  count    = contains(["internal-ingest"], var.logscale_cluster_type) ? 1 : 0
+  count    = contains(["advanced"], var.logscale_cluster_type) ? 1 : 0
   provider = google-beta
 
   name          = (var.gcp_subnetwork_proxy_name != "" ? var.gcp_subnetwork_proxy_name : "${var.infrastructure_prefix}-${var.env_identifier_rand}-subnetwork-proxy-${var.region}")
@@ -90,7 +90,7 @@ resource "google_compute_firewall" "allow-internal" {
 
 # Created for internal ingest LB
 resource "google_compute_firewall" "allow_internal_subnetwork_proxy" {
-  count = contains(["internal-ingest"], var.logscale_cluster_type) ? 1 : 0
+  count = contains(["advanced"], var.logscale_cluster_type) ? 1 : 0
 
   name    = "${google_compute_network.network.name}-allow-subnet-proxy"
   network = google_compute_network.network.name

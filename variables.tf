@@ -277,8 +277,8 @@ variable "logscale_cluster_type" {
   default = "basic"
   type    = string
   validation {
-    condition     = contains(["basic", "ingress", "internal-ingest"], var.logscale_cluster_type)
-    error_message = "logscale_cluster_type must be one of: basic, , or internal-ingest"
+    condition     = contains(["basic", "ingress", "advanced"], var.logscale_cluster_type)
+    error_message = "logscale_cluster_type must be one of: basic, ingress , or advanced"
   }
 }
 
@@ -331,6 +331,90 @@ variable "logscale_gcp_tf_state_bucket" {
   type    = string
   default = "xxxxx-logscale-terraform-state-v1"
 }
+
+variable "humiocluster_license" {
+  description = "LogScale license key"
+  type        = string
+  sensitive   = true
+}
+
+variable "humio_operator_version" {
+  description = "Humio operator version"
+  type        = string
+  default     = "0.21.0"
+}
+
+variable "humio_operator_extra_values" {
+  description = "Extra values for Humio operator"
+  type        = map(string)
+  default     = {}
+}
+
+variable "cm_version" {
+  description = "Cert-manager version"
+  type        = string
+  default     = "v1.13.0"
+}
+
+variable "cm_repo" {
+  description = "Cert-manager repository"
+  type        = string
+  default     = "https://charts.jetstack.io"
+}
+
+variable "cm_namespace" {
+  description = "Cert-manager namespace"
+  type        = string
+  default     = "cert-manager"
+}
+
+variable "ca_server" {
+  description = "Certificate authority server"
+  type        = string
+  default     = "https://acme-v02.api.letsencrypt.org/directory"
+}
+
+variable "issuer_name" {
+  description = "Certificate issuer name"
+  type        = string
+  default     = "letsencrypt-prod"
+}
+
+variable "issuer_email" {
+  description = "Certificate issuer email"
+  type        = string
+}
+
+variable "issuer_kind" {
+  description = "Certificate issuer kind"
+  type        = string
+  default     = "ClusterIssuer"
+}
+
+variable "issuer_private_key" {
+  description = "Certificate issuer private key"
+  type        = string
+  default     = "letsencrypt-prod"
+}
+
+variable "humio_operator_chart_version" {
+  description = "Humio operator chart version"
+  type        = string
+  default     = "0.21.0"
+}
+
+variable "logscale_image_version" {
+  description = "LogScale image version"
+  type        = string
+  default     = "1.131.1"
+}
+
+variable "kubeconfig_filepath" {
+  description = "Path to kubeconfig file"
+  type        = string
+  default     = "~/.kube/config"
+}
+
 
 
 

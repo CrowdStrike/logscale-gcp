@@ -16,6 +16,16 @@ variable "cluster_name" {
   type        = string
 }
 
+# LogScale configuration
+variable "logscale_cluster_type" {
+  description = "Type of LogScale cluster"
+  type        = string
+  validation {
+    condition     = contains(["basic", "ingress", "advanced"], var.logscale_cluster_type)
+    error_message = "logscale_cluster_type must be one of: basic, ingress, or advanced"
+  }
+}
+
 # Project and region
 variable "project_id" {
   description = "The GCP project ID"
@@ -25,16 +35,6 @@ variable "project_id" {
 variable "region" {
   description = "The GCP region"
   type        = string
-}
-
-# LogScale configuration
-variable "logscale_cluster_type" {
-  description = "Type of LogScale cluster"
-  type        = string
-  validation {
-    condition     = contains(["basic", "ingress", "internal-ingest"], var.logscale_cluster_type)
-    error_message = "logscale_cluster_type must be one of: basic, ingress, or internal-ingest"
-  }
 }
 
 variable "logscale_cluster_k8s_namespace_name" {
@@ -48,7 +48,6 @@ variable "public_url" {
   type        = string
 }
 
-# Local values that need to be passed in
 variable "logscale_cluster_name" {
   description = "LogScale cluster name"
   type        = string
@@ -57,4 +56,10 @@ variable "logscale_cluster_name" {
 variable "logscale_gce_ingress_ip" {
   description = "GCE ingress IP name"
   type        = string
+}
+
+variable "humiocluster_license" {
+  description = "LogScale license key"
+  type        = string
+  sensitive   = true
 }

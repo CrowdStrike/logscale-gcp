@@ -26,9 +26,6 @@ output "node_pools" {
     logscale_node_pool = {
       name = google_container_node_pool.logscale_node_pool.name
     }
-    kafka_node_pool = {
-      name = google_container_node_pool.kafka_node_pool.name
-    }
     ingress_node_pool = length(google_container_node_pool.logscale_ingress_node_pool) > 0 ? {
       name = google_container_node_pool.logscale_ingress_node_pool[0].name
     } : null

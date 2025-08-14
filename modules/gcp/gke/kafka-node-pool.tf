@@ -1,5 +1,5 @@
 # Every logscale_cluster_type will have this nodepool defined
-resource "google_container_node_pool" "kafka_node_pool" {
+/*resource "google_container_node_pool" "kafka_node_pool" {
   provider   = google-beta
   name       = (var.logscale_gke_cluster_name != "" ? "${var.logscale_gke_cluster_name}-np-kafka-${random_string.node_pool_suffix.result}" : "${var.infrastructure_prefix}-${var.env_identifier_rand}-np-kafka-${random_string.node_pool_suffix.result}")
   location   = var.region
@@ -53,4 +53,4 @@ resource "google_container_node_pool" "kafka_node_pool" {
   depends_on = [
     google_container_cluster.logscale,
   ]
-}
+}*/

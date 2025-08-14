@@ -100,6 +100,7 @@ locals {
     key => local.cluster_size_template[key]
   }
   logscale_cluster_name = (var.logscale_gke_cluster_name != "" ? var.logscale_gke_cluster_name : "${var.infrastructure_prefix}-${random_string.env_identifier_rand.result}")
+  kubeconfig_filepath = var.kubeconfig_filepath != "" ? var.kubeconfig_filepath : "~/.kube/config"
 }
 
 # VPC Module
@@ -181,8 +182,9 @@ module "gke" {
 }
 
 # Kubernetes pre-install module
-/*module "kubernetes_pre_install" {
+module "kubernetes_pre_install" {
   source = "./modules/kubernetes/pre-install"
+
   
   # Cluster connection info
   cluster_endpoint       = module.gke.cluster_endpoint
@@ -197,13 +199,100 @@ module "gke" {
   logscale_cluster_type               = var.logscale_cluster_type
   logscale_cluster_k8s_namespace_name = var.logscale_cluster_k8s_namespace_name
   public_url                          = var.public_url
-  
-  # Pass computed values
   logscale_cluster_name     = local.logscale_cluster_name
-  logscale_gce_ingress_ip   = module.vpc.gce-ingress-external-static-ip
+  logscale_gce_ingress_ip   = module.vpc.gce_ingress_ip_name
+  humiocluster_license                   = var.humiocluster_license
   
   depends_on = [module.gke, module.vpc]
-}*/
+}
+
+module "logscale" {
+  source = "./modules/logscale-kubernetes-gcp"
+
+  providers = {
+    kubernetes = kubernetes
+    google     = google
+    helm       = helm
+  }
+
+  k8s_cluster_name                   = module.gke.cluster_name
+  k8s_config_path                    = local.kubeconfig_filepath
+  k8s_cluster_context                = module.gke.cluster_name
+
+  topo_lvm_chart_version             = "15.5.2"
+  nginx_ingress_helm_chart_version   = "4.12.1"
+
+  # kafka - GCP uses Strimzi
+  byo_kafka_connection_string        = "${local.logscale_cluster_name}-strimzi-kafka-kafka-bootstrap.logging.svc.cluster.local:9093"
+  provision_kafka_servers            = true
+  
+  # GCP doesn't use nginx ingress - uses native load balancer
+  deploy_nginx_ingress               = false
+
+  # cert manager
+  cm_version                         = var.cm_version
+  cm_repo                            = var.cm_repo
+  cm_namespace                       = var.cm_namespace
+  cert_ca_server                     = var.ca_server
+  cert_issuer_name                   = var.issuer_name
+  cert_issuer_email                  = var.issuer_email
+  cert_issuer_kind                   = var.issuer_kind
+  cert_issuer_private_key            = var.issuer_private_key
+
+  # logscale
+  logscale_cluster_size              = var.logscale_cluster_size
+  logscale_cluster_type              = var.logscale_cluster_type
+  logscale_license                   = var.humiocluster_license
+  logscale_public_fqdn               = var.public_url
+  logscale_namespace                 = var.logscale_cluster_k8s_namespace_name
+  logscale_image_version             = var.logscale_image_version
+  humio_operator_chart_version       = var.humio_operator_chart_version
+  humio_operator_version             = var.humio_operator_version
+  humio_operator_extra_values        = var.humio_operator_extra_values
+
+  # GCP-specific environment variables (like AWS S3 vars)
+  user_logscale_envvars = [
+    {
+      "name"  = "GCP_STORAGE_WORKLOAD_IDENTITY"
+      "value" = "true"
+    },
+    {
+      "name"  = "GCP_STORAGE_BUCKET"
+      "value" = google_storage_bucket.logscale_bucket_storage.name
+    },
+    {
+      "name" = "GCP_STORAGE_ENCRYPTION_KEY"
+      "valueFrom" = {
+        "secretKeyRef" = {
+          "key"  = "gcp-storage-encryption-key"
+          "name" = module.kubernetes_pre_install.gcp_storage_encryption_key_k8s_secret_name
+        }
+      }
+    },
+    {
+      "name"  = "EXTRA_KAFKA_CONFIGS_FILE"
+      "value" = "/tmp/kafka-client/kafka.properties"
+    },
+  ]
+
+  extra_humio_cluster_spec = {
+    humioServiceAccountAnnotations = {
+      "iam.gke.io/gcp-service-account" = module.gcs_workload_identity.gcp_service_account_email
+    }
+  }
+
+  # GCP-specific settings (like AWS ALB annotations)
+  cloud_provider         = "gcp"
+  gcp_static_ip_name     = module.vpc.gce_ingress_ip_name
+  gcp_managed_cert_name  = "${local.logscale_cluster_name}-google-managed-certificate"
+
+  # No extra nginx annotations for GCP (uses native load balancer)
+  extra_nginx_annotations = {}
+
+ depends_on = [module.kubernetes_pre_install]
+
+}
+
 
 
 resource "google_storage_bucket" "logscale_bucket_storage" {

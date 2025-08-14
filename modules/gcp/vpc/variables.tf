@@ -36,7 +36,7 @@ variable "gcp_cidr_range" {
   default     = "10.128.0.0/20"
 }
 
-# Proxy subnetwork (for internal-ingest)
+# Proxy subnetwork (for advanced)
 variable "gcp_subnetwork_proxy_name" {
   description = "Name of the proxy subnetwork"
   type        = string
@@ -55,8 +55,8 @@ variable "logscale_cluster_type" {
   type        = string
   default     = "basic"
   validation {
-    condition     = contains(["basic", "ingress", "internal-ingest"], var.logscale_cluster_type)
-    error_message = "logscale_cluster_type must be one of: basic, ingress, or internal-ingest"
+    condition     = contains(["basic", "ingress", "advanced"], var.logscale_cluster_type)
+    error_message = "logscale_cluster_type must be one of: basic, ingress, or advanced"
   }
 }
 

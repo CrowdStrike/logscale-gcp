@@ -38,7 +38,7 @@ output "subnetwork_self_link" {
   value       = google_compute_subnetwork.subnetwork.self_link
 }
 
-# Conditional outputs for internal-ingest
+# Conditional outputs for advanced
 output "proxy_subnetwork_id" {
   description = "ID of the proxy subnetwork (if created)"
   value       = length(google_compute_subnetwork.subnetwork_proxy) > 0 ? google_compute_subnetwork.subnetwork_proxy[0].id : null
