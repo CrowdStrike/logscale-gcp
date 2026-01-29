@@ -1,0 +1,72 @@
+# Example terraform.tfvars for LogScale GCP deployment
+# Copy this file to terraform.tfvars and update with your actual values
+
+# Basic project configuration
+project_id = "your-gcp-project-id"
+region     = "us-central1"
+zone       = "us-central1-a"
+
+# LogScale configuration
+logscale_cluster_type               = "basic"  # or "advanced" or "dedicated-ui"
+logscale_cluster_size               = "xsmall"        # xsmall, small, medium, large, xlarge
+logscale_cluster_k8s_namespace_name = "logging"
+
+# HumioCluster instance name for certificate issuer reference
+humio_cluster_instance_name = "your-cluster-name"
+
+# LogScale versions
+humio_operator_chart_version = "0.29.2"
+humio_operator_version       = "0.29.2"
+logscale_image_version       = "1.207.0"
+
+# Maintenance window - Add your IP ranges for kubectl access
+ip_ranges_allowed_to_kubeapi = [
+  "203.0.113.0/24",    # Example: Your office network
+  "198.51.100.1/32",   # Example: Your home IP
+]
+
+# Network security
+kubernetes_private_cluster_enabled = false
+
+# Kafka configuration
+provision_kafka_servers = true
+
+# Storage bucket names (must be globally unique)
+gcs_bucket_name              = "your-unique-logscale-storage-bucket"
+logscale_access_logs_bucket  = "your-unique-logscale-access-logs-bucket"
+
+# Service account name
+logscale_cluster_k8s_service_account_name = "your-cluster-humio"
+
+# Infrastructure naming
+infrastructure_prefix = "logscale"
+
+# GKE cluster name
+logscale_gke_cluster_name = "logscale-gke-cluster"
+
+# Static IP and networking names
+gce_ingress_ip_name         = "logscale-gce-ingress-ip"
+gcp_network_nat_ip_name     = "logscale-egress-ip"
+gcp_network_router_name     = "logscale-network-router"
+gcp_network_router_nat_name = "logscale-nat-router"
+
+# Public URL for LogScale UI
+public_url = "logscale.your-domain.com"
+
+# Cert-manager configuration
+cm_namespace                 = "cert-manager"
+cm_repo                      = "https://charts.jetstack.io"
+cm_version                   = "v1.15.1"
+issuer_kind                  = "ClusterIssuer"
+issuer_name                  = "letsencrypt-cluster-issuer"
+issuer_email                 = "your-email@your-domain.com"
+issuer_private_key           = "letsencrypt-cluster-issuer-key"
+ca_server                    = "https://acme-v02.api.letsencrypt.org/directory"
+
+# Strimzi Kafka operator versions
+strimzi_operator_version        = "0.45.0"
+strimzi_operator_chart_version  = "0.45.0"
+
+# LogScale License - Get from Humio/CrowdStrike
+# Visit: https://www.humio.com/community-edition/ for community license
+humiocluster_license = "your-logscale-license-jwt-token-here"

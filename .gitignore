@@ -1,0 +1,24 @@
+# Terraform files
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+.terraform/
+
+# Keep example files for reference
+!terraform.tfvars.example
+
+# Terraform overrides and plans
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+*tfplan*
+
+# Terraform CLI config
+.terraformrc
+terraform.rc
+
+# Crash logs
+crash.log
+crash.*.log
