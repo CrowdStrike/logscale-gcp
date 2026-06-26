@@ -50,3 +50,38 @@ output "gcs_workload_identity" {
   description = "GCS workload identity module outputs"
   value       = module.gcs_workload_identity
 }
+
+# DR-related outputs
+output "gcs_bucket_id" {
+  description = "GCS bucket name for LogScale storage (for remote state access)"
+  value       = module.log_storage_bucket.name
+}
+
+output "gcs_bucket_region" {
+  description = "GCS bucket region (for remote state access)"
+  value       = var.region
+}
+
+output "gcs_storage_encryption_key" {
+  description = "GCS storage encryption key (primary clusters only)"
+  value       = null # Handled by kubernetes post-install module
+  sensitive   = true
+}
+
+output "dr_mode" {
+  description = "Current DR mode (active/standby)"
+  value       = var.dr
+}
+
+output "gcs_service_account_email" {
+  description = "Service account email for cross-region GCS access"
+  value       = module.gcs_workload_identity.gcp_service_account_email
+}
+
+output "instance_group_urls" {
+  description = "Instance group URLs for the GKE node pools (for GLB backend)"
+  value = [
+    for url in google_container_node_pool.logscale_node_pool.instance_group_urls :
+    replace(url, "instanceGroupManagers", "instanceGroups")
+  ]
+}

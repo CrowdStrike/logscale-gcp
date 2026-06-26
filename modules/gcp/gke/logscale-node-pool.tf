@@ -39,18 +39,17 @@ resource "google_container_node_pool" "logscale_node_pool" {
     workload_metadata_config {
       mode = "GKE_METADATA"
     }
-    
+
   }
 
   management {
     auto_repair  = "true"
-    auto_upgrade = "false"
+    auto_upgrade = var.auto_upgrade
   }
 
-  # This would ensure that node pool which you want to replace stays up until the replacement pool has been created.
+  # Avoid downtime during node pool replacement; ignore GKE-managed metadata drift
   lifecycle {
     create_before_destroy = true
-    # ignore changes to metadata as it's causing force replacement of nodepool
     ignore_changes = [
       node_config[0].metadata,
       node_config[0].resource_labels

@@ -8,6 +8,7 @@ resource "google_container_cluster" "logscale" {
   enable_shielded_nodes = var.enable_shielded_nodes
   logging_service       = var.logging_service
   monitoring_service    = var.monitoring_service
+  deletion_protection   = var.deletion_protection
 
   network    = var.network_name
   subnetwork = var.subnetwork_name

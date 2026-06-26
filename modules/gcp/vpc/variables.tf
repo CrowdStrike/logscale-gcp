@@ -1,3 +1,21 @@
+# External load balancer toggle
+variable "enable_global_lb" {
+  description = "Create external ingress IP and GLB health check firewall rule. Set to false for private-only deployments."
+  type        = bool
+  default     = true
+}
+
+variable "ingress_mode" {
+  description = "Per-cluster ingress mode: disabled, internal, external-restricted"
+  type        = string
+  default     = "disabled"
+
+  validation {
+    condition     = contains(["disabled", "internal", "external-restricted"], var.ingress_mode)
+    error_message = "ingress_mode must be one of: disabled, internal, external-restricted"
+  }
+}
+
 # Basic configuration
 variable "project_id" {
   description = "The GCP project ID"
@@ -49,12 +67,12 @@ variable "gcp_subnetwork_proxy_cidr_range" {
 
 # LogScale Cluster Type
 variable "logscale_cluster_type" {
-  description       = "Logscale cluster type"
-  type              = string
+  description = "Logscale cluster type"
+  type        = string
 
   validation {
-    condition       = contains(["basic", "ingress", "dedicated-ui", "advanced"], var.logscale_cluster_type)
-    error_message   = "logscale_cluster_type must be one of: basic, ingress, or advanced"
+    condition     = contains(["basic", "dedicated-ui", "advanced"], var.logscale_cluster_type)
+    error_message = "logscale_cluster_type must be one of: basic, dedicated-ui, or advanced"
   }
 }
 

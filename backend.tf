@@ -1,5 +1,7 @@
-# Terraform State Bucket and Prefix
-# NOTE: This bucket name must also be updated in variables.tf (logscale_gcp_tf_state_bucket)
+# Terraform Backend Configuration for GCP
+# This configuration uses Google Cloud Storage (GCS) to store Terraform state
+# and provides state locking functionality
+
 terraform {
   backend "gcs" {
     bucket = "XXXXX-logscale-terraform-state-v1"

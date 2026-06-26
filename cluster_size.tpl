@@ -3,7 +3,7 @@ ${jsonencode(
     // This template specifies the available paramaters for the different sizes of LogScale clusters
     "xsmall": {
         "logscale_digest_node_count": 3,
-        "logscale_digest_machine_type": "n2-standard-16",
+        "logscale_digest_machine_type": "n2-highmem-16",
         "logscale_digest_local_ssd_count": 8,
         "logscale_digest_root_disk_size": 128,
         "logscale_digest_root_disk_type": "pd-ssd",
@@ -11,16 +11,16 @@ ${jsonencode(
         "logscale_digest_data_disk_type": "topolvm-provisioner",
         "logscale_digest_min_node_count": 1,
         "logscale_digest_max_node_count": 3,
-        
+
         "logscale_ingest_node_count": 3,
-        "logscale_ingest_machine_type": "e2-standard-8",
+        "logscale_ingest_machine_type": "e2-highmem-8",
         "logscale_ingest_root_disk_size": 128,
         "logscale_ingest_root_disk_type": "pd-ssd",
         "logscale_ingest_data_disk_size": "128Gi",
         "logscale_ingest_data_disk_type": "premium-rwo",
         "logscale_ingest_min_node_count": 1,
         "logscale_ingest_max_node_count": 3,
-        
+
         "logscale_ui_node_count": 3,
         "logscale_ui_machine_type": "e2-highmem-8",
         "logscale_ui_root_disk_size": 128,
@@ -29,15 +29,15 @@ ${jsonencode(
         "logscale_ui_data_disk_type": "premium-rwo",
         "logscale_ui_min_node_count": 1,
         "logscale_ui_max_node_count": 3,
-        
+
         "kafka_broker_node_count": 3,
-        "kafka_broker_machine_type": "e2-standard-8",
+        "kafka_broker_machine_type": "n2-standard-16",
         "kafka_broker_min_node_count": 1,
         "kafka_broker_max_node_count": 3,
         "kafka_broker_root_disk_size": 128,
         "kafka_broker_root_disk_type": "pd-ssd",
         "kafka_broker_data_disk_size": "1024Gi",
-        
+
     },
     "small": {
         "logscale_digest_node_count": 9,
@@ -48,15 +48,15 @@ ${jsonencode(
         "logscale_digest_data_disk_size": "5800Gi",
         "logscale_digest_min_node_count": 3,
         "logscale_digest_max_node_count": 6,
-        
+
         "logscale_ingest_node_count": 3,
-        "logscale_ingest_machine_type": "e2-standard-4",
+        "logscale_ingest_machine_type": "n2-standard-16",
         "logscale_ingest_root_disk_size": 128,
         "logscale_ingest_root_disk_type": "pd-ssd",
         "logscale_ingest_data_disk_size": "128Gi",
         "logscale_ingest_min_node_count": 1,
         "logscale_ingest_max_node_count": 3,
-        
+
         "logscale_ui_node_count": 3,
         "logscale_ui_machine_type": "e2-highmem-8",
         "logscale_ui_root_disk_size": 128,
@@ -64,26 +64,26 @@ ${jsonencode(
         "logscale_ui_data_disk_size": "128Gi",
         "logscale_ui_min_node_count": 1,
         "logscale_ui_max_node_count": 3,
-        
+
         "kafka_broker_node_count": 6,
-        "kafka_broker_machine_type": "e2-standard-8",
+        "kafka_broker_machine_type": "n2-highmem-8",
         "kafka_broker_min_node_count": 2,
         "kafka_broker_max_node_count": 4,
         "kafka_broker_root_disk_size": 128,
         "kafka_broker_root_disk_type": "pd-ssd",
         "kafka_broker_data_disk_size": "1024Gi",
-        
+
     },
     "medium": {
         "logscale_digest_node_count": 21,
-        "logscale_digest_machine_type": "n2-standard-32",
+        "logscale_digest_machine_type": "n2-highmem-32",
         "logscale_digest_local_ssd_count": 32,
         "logscale_digest_root_disk_size": 128,
         "logscale_digest_root_disk_type": "pd-ssd",
         "logscale_digest_data_disk_size": "11500Gi",
         "logscale_digest_min_node_count": 7,
         "logscale_digest_max_node_count": 9,
-        
+
         "logscale_ingest_node_count": 6,
         "logscale_ingest_machine_type": "n2-standard-8",
         "logscale_ingest_root_disk_size": 200,
@@ -91,7 +91,7 @@ ${jsonencode(
         "logscale_ingest_data_disk_size": "128Gi",
         "logscale_ingest_min_node_count": 2,
         "logscale_ingest_max_node_count": 4,
-        
+
         "logscale_ui_node_count": 6,
         "logscale_ui_machine_type": "n2-highmem-8",
         "logscale_ui_root_disk_size": 200,
@@ -99,15 +99,15 @@ ${jsonencode(
         "logscale_ui_data_disk_size": "128Gi",
         "logscale_ui_min_node_count": 2,
         "logscale_ui_max_node_count": 4,
-        
+
         "kafka_broker_node_count": 9,
-        "kafka_broker_machine_type": "n2-standard-8",
+        "kafka_broker_machine_type": "n2-highmem-16",
         "kafka_broker_min_node_count": 3,
         "kafka_broker_max_node_count": 9,
         "kafka_broker_root_disk_size": 200,
         "kafka_broker_root_disk_type": "pd-ssd",
         "kafka_broker_data_disk_size": "1252Gi",
-        
+
     },
     "large": {
         "logscale_digest_node_count": 42,
@@ -118,7 +118,7 @@ ${jsonencode(
         "logscale_digest_data_disk_size": "11500Gi",
         "logscale_digest_min_node_count": 14,
         "logscale_digest_max_node_count": 16,
-        
+
         "logscale_ingest_node_count": 9,
         "logscale_ingest_machine_type": "n2-standard-16",
         "logscale_ingest_root_disk_size": 200,
@@ -126,7 +126,7 @@ ${jsonencode(
         "logscale_ingest_data_disk_size": "128Gi",
         "logscale_ingest_min_node_count": 3,
         "logscale_ingest_max_node_count": 6,
-        
+
         "logscale_ui_node_count": 9,
         "logscale_ui_machine_type": "n2-highmem-16",
         "logscale_ui_root_disk_size": 128,
@@ -134,15 +134,15 @@ ${jsonencode(
         "logscale_ui_data_disk_size": "128Gi",
         "logscale_ui_min_node_count": 3,
         "logscale_ui_max_node_count": 6,
-        
+
         "kafka_broker_node_count": 9,
-        "kafka_broker_machine_type": "n2-standard-16",
+        "kafka_broker_machine_type": "n2-highmem-16",
         "kafka_broker_min_node_count": 3,
         "kafka_broker_max_node_count": 9,
         "kafka_broker_root_disk_size": 200,
         "kafka_broker_root_disk_type": "pd-ssd",
         "kafka_broker_data_disk_size": "2504Gi",
-        
+
     },
     "xlarge": {
         "logscale_digest_node_count": 78,
@@ -153,7 +153,7 @@ ${jsonencode(
         "logscale_digest_data_disk_size": "11500Gi",
         "logscale_digest_min_node_count": 26,
         "logscale_digest_max_node_count": 28,
-        
+
         "logscale_ingest_node_count": 9,
         "logscale_ingest_machine_type": "n2-standard-16",
         "logscale_ingest_root_disk_size": 200,
@@ -161,7 +161,7 @@ ${jsonencode(
         "logscale_ingest_data_disk_size": "128Gi",
         "logscale_ingest_min_node_count": 3,
         "logscale_ingest_max_node_count": 6,
-        
+
         "logscale_ui_node_count": 9,
         "logscale_ui_machine_type": "n2-highmem-32",
         "logscale_ui_root_disk_size": 128,
@@ -169,15 +169,15 @@ ${jsonencode(
         "logscale_ui_data_disk_size": "128Gi",
         "logscale_ui_min_node_count": 3,
         "logscale_ui_max_node_count": 6,
-        
+
         "kafka_broker_node_count": 18,
-        "kafka_broker_machine_type": "n2-standard-16",
+        "kafka_broker_machine_type": "n2-highmem-32",
         "kafka_broker_min_node_count": 3,
         "kafka_broker_max_node_count": 9,
         "kafka_broker_root_disk_size": 200,
         "kafka_broker_root_disk_type": "pd-ssd",
-        "kafka_broker_data_disk_size": "2504Gi",
-        
-    },
+        "kafka_broker_data_disk_size": "2504Gi"
+
+    }
 }
 )}
