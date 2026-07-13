@@ -5,7 +5,7 @@ output "logscale-nat-ip" {
 
 output "gce-ingress-external-static-ip" {
   description = "GCE ingress external static IP address"
-  value       = google_compute_global_address.gce_ingress_ip.address
+  value       = (var.enable_global_lb || var.ingress_mode == "external-restricted") ? google_compute_global_address.gce_ingress_ip[0].address : ""
 }
 
 output "network_id" {
@@ -51,10 +51,10 @@ output "proxy_subnetwork_name" {
 
 output "gce_ingress_ip_name" {
   description = "Name of the GCE ingress IP address"
-  value       = google_compute_global_address.gce_ingress_ip.name
+  value       = (var.enable_global_lb || var.ingress_mode == "external-restricted") ? google_compute_global_address.gce_ingress_ip[0].name : ""
 }
 
 output "gce_ingress_ip_address" {
   description = "The GCE ingress IP address"
-  value       = google_compute_global_address.gce_ingress_ip.address
+  value       = (var.enable_global_lb || var.ingress_mode == "external-restricted") ? google_compute_global_address.gce_ingress_ip[0].address : ""
 }

@@ -1,3 +1,15 @@
+variable "deletion_protection" {
+  description = "Prevent accidental cluster deletion."
+  type        = bool
+  default     = true
+}
+
+variable "gcs_force_destroy" {
+  description = "Allow Terraform to destroy GCS buckets even when they contain objects"
+  type        = bool
+  default     = false
+}
+
 # Basic cluster configuration
 variable "project_id" {
   description = "The GCP project ID"
@@ -34,9 +46,15 @@ variable "min_master_version" {
 }
 
 variable "node_pool_version" {
-  description = "Node pool GKE version"
+  description = "GKE node pool version. Should match min_master_version. When auto_upgrade=true, this is the initial version only — GKE will auto-upgrade within the maintenance window. When auto_upgrade=false, this is the pinned version and must be updated manually."
   type        = string
   default     = "1.33.3-gke.1136000"
+}
+
+variable "auto_upgrade" {
+  description = "Enable automatic node pool version upgrades. Set to false (default) for manual control over node pool versions via node_pool_version variable. Set to true to let GKE auto-upgrade node pools to match the control plane version within the maintenance window."
+  type        = bool
+  default     = false
 }
 
 # Cluster configuration
@@ -149,12 +167,12 @@ variable "logscale_cluster_size" {
 
 # LogScale Cluster Type
 variable "logscale_cluster_type" {
-  description       = "Logscale cluster type"
-  type              = string
+  description = "Logscale cluster type"
+  type        = string
 
   validation {
-    condition       = contains(["basic", "ingress", "dedicated-ui", "advanced"], var.logscale_cluster_type)
-    error_message   = "logscale_cluster_type must be one of: basic, ingress, or advanced"
+    condition     = contains(["basic", "dedicated-ui", "advanced"], var.logscale_cluster_type)
+    error_message = "logscale_cluster_type must be one of: basic, dedicated-ui, or advanced"
   }
 }
 
@@ -166,19 +184,20 @@ variable "cluster_size_definitions" {
 
 variable "ip_ranges_allowed_to_kubeapi" {
   type        = list(any)
-  description = "IP ranges allowed to access the public kubernetes api. Setting to null allows public access."
+  description = "IP ranges allowed to access the Kubernetes API. When empty, only GCP public CIDRs can reach the API. Add 0.0.0.0/0 for unrestricted access."
   default     = []
 }
 
 # LogScale bucket storage bucket name
 variable "gcs_bucket_name" {
-  type    = string
+  type = string
 }
 
 
 # LogScale GCS access logs bucket
 variable "logscale_access_logs_bucket" {
   type    = string
+  default = ""
 }
 
 # GKE Cluster Service Account
@@ -200,13 +219,92 @@ variable "logscale_tf_service_account_name" {
 }
 
 variable "kubernetes_private_cluster_enabled" {
-  type              = bool
-  default           = false
-  description       = "When true, the kubernetes API is only accessible from internal networks. When false, the API is available to the list of IP ranges provided in variable ip_ranges_allowed_to_kubeapi."
+  type        = bool
+  default     = false
+  description = "When true, the kubernetes API is only accessible from internal networks. When false, the API is available to the list of IP ranges provided in variable ip_ranges_allowed_to_kubeapi."
 }
 
 variable "provision_kafka_servers" {
   description = "Set this to true to provision strimzi kafka within this kubernetes cluster. It should be false if you are bringing your own kafka implementation."
-  default = true
-  type = bool
+  default     = true
+  type        = bool
+}
+
+# DR Configuration Variables
+variable "dr" {
+  description = "Disaster Recovery mode: 'active' for primary cluster, 'standby' for secondary cluster"
+  type        = string
+  default     = "active"
+}
+
+variable "dr_primary_gcs_bucket" {
+  description = "Primary cluster's GCS bucket name for cross-region access"
+  type        = string
+  default     = ""
+}
+
+variable "manage_terraform_service_account" {
+  description = "Whether to create and manage the Terraform service account and IAM bindings (requires IAM admin permissions)"
+  type        = bool
+  default     = false
+}
+
+# When use_existing_gcp_sa = true (default), the workload identity module
+# looks up an already-provisioned GCP SA via data source. The caller must
+# supply the full account_id via existing_gcp_sa_name.
+# When false, the module creates a new SA using infrastructure_prefix naming.
+variable "use_existing_gcp_sa" {
+  description = "Use a pre-existing GCP service account for workload identity instead of creating one"
+  type        = bool
+  default     = true
+}
+
+variable "existing_gcp_sa_name" {
+  description = "Full account_id of the pre-existing GCP service account for workload identity (e.g. 'my-project-tf-sa'). Only used when use_existing_gcp_sa = true."
+  type        = string
+  default     = ""
+}
+
+variable "primary_remote_state" {
+  description = "Primary cluster's remote state data (for secondary clusters)"
+  type        = any
+  default     = null
+}
+
+variable "existing_gcs_encryption_key" {
+  description = "Existing GCS encryption key for standby clusters"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "resource_name_prefix" {
+  description = "Prefix used for LogScale resources (HumioCluster name)"
+  type        = string
+  default     = ""
+}
+
+variable "logscale_cluster_name_prefix" {
+  description = "Full cluster name prefix from logscale module (includes random prefix, e.g., z7su31-dr-primary). Used for node pool SA workload identity bindings."
+  type        = string
+  default     = ""
+}
+
+# IAM binding toggles for the terraform service account
+variable "logscale_tf_service_account_iam_storage_admin_enabled" {
+  description = "Enable storage.admin IAM binding for the terraform service account"
+  type        = bool
+  default     = true
+}
+
+variable "logscale_tf_service_account_iam_compute_admin_enabled" {
+  description = "Enable compute.admin IAM binding for the terraform service account"
+  type        = bool
+  default     = true
+}
+
+variable "logscale_tf_service_account_iam_gke_admin_enabled" {
+  description = "Enable container.admin IAM binding for the terraform service account"
+  type        = bool
+  default     = true
 }
